@@ -32,7 +32,6 @@ class TcpHeader;
 class TcpSocketBase;
 class Time;
 
-
 class TcpGymEnv : public OpenGymEnv
 {
 public:
@@ -41,36 +40,36 @@ public:
   static TypeId GetTypeId (void);
   virtual void DoDispose ();
 
-  void SetNodeId(uint32_t id);
-  void SetSocketUuid(uint32_t id);
+  void SetNodeId (uint32_t id);
+  void SetSocketUuid (uint32_t id);
 
-  std::string GetTcpCongStateName(const TcpSocketState::TcpCongState_t state);
-  std::string GetTcpCAEventName(const TcpSocketState::TcpCAEvent_t event);
+  std::string GetTcpCongStateName (const TcpSocketState::TcpCongState_t state);
+  std::string GetTcpCAEventName (const TcpSocketState::TcpCAEvent_t event);
 
   // OpenGym interface
-  virtual Ptr<OpenGymSpace> GetActionSpace();
-  virtual bool GetGameOver();
-  virtual float GetReward();
-  virtual std::string GetExtraInfo();
-  virtual bool ExecuteActions(Ptr<OpenGymDataContainer> action);
+  virtual Ptr<OpenGymSpace> GetActionSpace ();
+  virtual bool GetGameOver ();
+  virtual float GetReward ();
+  virtual std::string GetExtraInfo ();
+  virtual bool ExecuteActions (Ptr<OpenGymDataContainer> action);
 
-  virtual Ptr<OpenGymSpace> GetObservationSpace() = 0;
-  virtual Ptr<OpenGymDataContainer> GetObservation() = 0;
+  virtual Ptr<OpenGymSpace> GetObservationSpace () = 0;
+  virtual Ptr<OpenGymDataContainer> GetObservation () = 0;
 
   // trace packets, e.g. for calculating inter tx/rx time
-  virtual void TxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>) = 0;
-  virtual void RxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>) = 0;
+  virtual void TxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>) = 0;
+  virtual void RxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>) = 0;
 
   // TCP congestion control interface
   virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb, uint32_t bytesInFlight) = 0;
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked) = 0;
   // optional functions used to collect obs
-  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time& rtt) = 0;
-  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCongState_t newState) = 0;
+  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time &rtt) = 0;
+  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb,
+                                   const TcpSocketState::TcpCongState_t newState) = 0;
   virtual void CwndEvent (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCAEvent_t event) = 0;
 
-  typedef enum
-  {
+  typedef enum {
     GET_SS_THRESH = 0,
     INCREASE_WINDOW,
     PKTS_ACKED,
@@ -99,7 +98,6 @@ protected:
   uint32_t m_new_cWnd;
 };
 
-
 class TcpEventGymEnv : public TcpGymEnv
 {
 public:
@@ -108,23 +106,24 @@ public:
   static TypeId GetTypeId (void);
   virtual void DoDispose ();
 
-  void SetReward(float value);
-  void SetPenalty(float value);
+  void SetReward (float value);
+  void SetPenalty (float value);
 
   // OpenGym interface
-  virtual Ptr<OpenGymSpace> GetObservationSpace();
-  Ptr<OpenGymDataContainer> GetObservation();
+  virtual Ptr<OpenGymSpace> GetObservationSpace ();
+  Ptr<OpenGymDataContainer> GetObservation ();
 
   // trace packets, e.g. for calculating inter tx/rx time
-  virtual void TxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>);
-  virtual void RxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>);
+  virtual void TxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>);
+  virtual void RxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>);
 
   // TCP congestion control interface
   virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb, uint32_t bytesInFlight);
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
   // optional functions used to collect obs
-  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time& rtt);
-  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCongState_t newState);
+  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time &rtt);
+  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb,
+                                   const TcpSocketState::TcpCongState_t newState);
   virtual void CwndEvent (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCAEvent_t event);
 
 private:
@@ -142,7 +141,6 @@ private:
   float m_penalty;
 };
 
-
 class TcpTimeStepGymEnv : public TcpGymEnv
 {
 public:
@@ -153,44 +151,43 @@ public:
   virtual void DoDispose ();
 
   // OpenGym interface
-  virtual Ptr<OpenGymSpace> GetObservationSpace();
-  Ptr<OpenGymDataContainer> GetObservation();
+  virtual Ptr<OpenGymSpace> GetObservationSpace ();
+  Ptr<OpenGymDataContainer> GetObservation ();
 
   // trace packets, e.g. for calculating inter tx/rx time
-  virtual void TxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>);
-  virtual void RxPktTrace(Ptr<const Packet>, const TcpHeader&, Ptr<const TcpSocketBase>);
+  virtual void TxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>);
+  virtual void RxPktTrace (Ptr<const Packet>, const TcpHeader &, Ptr<const TcpSocketBase>);
 
   // TCP congestion control interface
   virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb, uint32_t bytesInFlight);
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
   // optional functions used to collect obs
-  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time& rtt);
-  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCongState_t newState);
+  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time &rtt);
+  virtual void CongestionStateSet (Ptr<TcpSocketState> tcb,
+                                   const TcpSocketState::TcpCongState_t newState);
   virtual void CwndEvent (Ptr<TcpSocketState> tcb, const TcpSocketState::TcpCAEvent_t event);
 
 private:
-  void ScheduleNextStateRead();
-  bool m_started {false};
+  void ScheduleNextStateRead ();
+  bool m_started{false};
   Time m_timeStep;
   // state
   Ptr<const TcpSocketState> m_tcb;
   std::vector<uint32_t> m_bytesInFlight;
   std::vector<uint32_t> m_segmentsAcked;
 
-  uint64_t m_rttSampleNum {0};
-  Time m_rttSum {MicroSeconds (0.0)};
+  uint64_t m_rttSampleNum{0};
+  Time m_rttSum{MicroSeconds (0.0)};
 
-  Time m_lastPktTxTime {MicroSeconds(0.0)};
-  Time m_lastPktRxTime {MicroSeconds(0.0)};
-  uint64_t m_interTxTimeNum {0};
-  Time m_interTxTimeSum {MicroSeconds (0.0)};
-  uint64_t m_interRxTimeNum {0};
-  Time m_interRxTimeSum {MicroSeconds (0.0)};
+  Time m_lastPktTxTime{MicroSeconds (0.0)};
+  Time m_lastPktRxTime{MicroSeconds (0.0)};
+  uint64_t m_interTxTimeNum{0};
+  Time m_interTxTimeSum{MicroSeconds (0.0)};
+  uint64_t m_interRxTimeNum{0};
+  Time m_interRxTimeSum{MicroSeconds (0.0)};
 
   // reward
 };
-
-
 
 } // namespace ns3
 

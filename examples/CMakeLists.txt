@@ -63,3 +63,21 @@ build_lib_example(
     ${libpoint-to-point-layout}
     ${libptp}
 )
+
+build_lib_example(
+  NAME rl-copa
+  SOURCE_FILES rl-copa/sim.cc
+               rl-copa/tcp-copa-env.cc
+               rl-copa/tcp-copa-rl.cc
+  LIBRARIES_TO_LINK
+    ${libapplications}
+    ${libcore}
+    ${libflow-monitor}
+    ${libinternet}
+    ${libopengym}
+    ${libpoint-to-point-layout}
+    ${libptp}
+    ${libtraffic-control}
+    ${libnetwork}
+    ${libinternet-apps}
+)
