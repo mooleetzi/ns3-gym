@@ -240,7 +240,7 @@ TcpCopaEnv::GetObservationSpace ()
   // congetsion algorithm (CA) state
   // CA event
   // ECN state
-  uint32_t parameterNum = 16;
+  uint32_t parameterNum = 15;
   float low = 0.0;
   float high = 1000000000.0;
   std::vector<uint32_t> shape = {

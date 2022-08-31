@@ -37,37 +37,24 @@ ac_space = env.action_space
 print("Observation space: ", ob_space,  ob_space.dtype)
 print("Action space: ", ac_space, ac_space.dtype)
 
-stepIdx = 0
-currIt = 0
 
-try:
-    while True:
-        print("Start iteration: ", currIt)
-        obs = env.reset()
-        print("Step: ", stepIdx)
-        print("---obs: ", obs)
+# dqn parameters
 
-        while True:
-            stepIdx += 1
-            action = env.action_space.sample()
-            print("---action: ", action)
+input_size = 15
+output_size = 1
+batch_size = 32
+epoch_num = 1000
+learning_rate = 0.001
 
-            print("Step: ", stepIdx)
-            obs, reward, done, info = env.step(action)
-            print("---obs, reward, done, info: ", obs, reward, done, info)
+for epoch in range(epoch_num):
+    obs = env.reset()
+    done = False
+    while not done:
+        action = env.action_space.sample()
+        obs, reward, done, info = env.step(action)
+        print("Reward: ", reward)
+        print("Info: ", info)
+        print("Done: ", done)
 
-            if done:
-                stepIdx = 0
-                if currIt + 1 < iterationNum:
-                    env.reset()
-                break
-
-        currIt += 1
-        if currIt == iterationNum:
-            break
-
-except KeyboardInterrupt:
-    print("Ctrl-C -> Exit")
-finally:
-    env.close()
-    print("Done")
+    print("Epoch: ", epoch)
+    

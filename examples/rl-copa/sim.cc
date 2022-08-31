@@ -108,7 +108,7 @@ main (int argc, char *argv[])
   std::string prefix_file_name = "TcpVariantsComparisonCopa";
   uint64_t data_mbytes = 0;
   uint32_t mtu_bytes = 400;
-  double duration = 100.0;
+  double duration = 10;
   uint32_t run = 0;
   bool flow_monitor = false;
   bool sack = true;
@@ -163,6 +163,7 @@ main (int argc, char *argv[])
 
   NS_LOG_UNCOND ("--seed: " << run);
   NS_LOG_UNCOND ("--Tcp version: " << transport_prot);
+  NS_LOG_UNCOND ("--duration: " << duration);
 
   // OpenGym Env --- has to be created before any other thing
   Ptr<OpenGymInterface> openGymInterface;
