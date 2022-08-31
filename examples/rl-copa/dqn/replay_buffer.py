@@ -21,7 +21,7 @@ class ReplayBuffer:
         self.observation_memory[index] = observation
         self.new_observation_memory[index] = new_observation
         self.reward_memory[index] = reward
-        self.action_memory[index] = action
+        self.action_memory[index] = action.get('vel')[0]
         self.terminal_memory[index] = done
         # increase memory counter
         self.mem_cntr += 1

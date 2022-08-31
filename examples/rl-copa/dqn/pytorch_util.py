@@ -1,4 +1,3 @@
-from modulefinder import Module
 import numpy as np
 import torch
 from torch import nn
@@ -20,18 +19,25 @@ _str_to_activation = {
 
 
 def build_mlp(input_size, output_size, n_layers, hidden_size, activation: Activation = 'tanh',
-              output_activation: Activation = 'identity'):
+              output_activation: Activation = 'identity') -> nn.Module:
     if isinstance(activation, str):
         activation = _str_to_activation[activation]
     if isinstance(output_activation, str):
         output_activation = _str_to_activation[output_activation]
-    return nn.Sequential(
-        nn.Linear(input_size, hidden_size),
+    layers = []
+    # input layer
+    layers.append(nn.Linear(input_size, hidden_size,device=device))
+    layers.append(activation)
+    # hidden layers
+    layers.extend([
+        nn.Linear(hidden_size, hidden_size,device=device),
         activation,
-        *[nn.Linear(hidden_size, hidden_size), activation] * n_layers,
-        nn.Linear(hidden_size, output_size),
-        output_activation
-    )
+    ] * n_layers)
+    # output layer
+    layers.append(nn.Linear(hidden_size, output_size,device=device))
+    layers.append(output_activation)
+
+    return nn.Sequential(*layers)
 
 
 device = None
@@ -41,6 +47,7 @@ def init_gpu(use_gpu=True, gpu_id=0):
     global device
     if torch.cuda.is_available() and use_gpu:
         device = torch.device("cuda:" + str(gpu_id))
+        set_device(gpu_id)
         print("Using GPU id {}".format(gpu_id))
     else:
         device = torch.device("cpu")
