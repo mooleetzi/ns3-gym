@@ -39,6 +39,7 @@ public:
   virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Time &rtt);
 
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
+  Ptr<OpenGymDataContainer> GetObservation (void);
 
   void Update_Velocity_Parameter (double now, double rtt, double win);
   float  Step (Ptr<OpenGymDataContainer> action);

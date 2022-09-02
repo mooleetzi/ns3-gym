@@ -101,9 +101,9 @@ main (int argc, char *argv[])
   uint32_t nLeaf = 1;
   std::string transport_prot = "TcpCopaRl";
   double error_p = 0.0;
-  std::string bottleneck_bandwidth = "2Mbps";
+  std::string bottleneck_bandwidth = "10Mbps";
   std::string bottleneck_delay = "0.01ms";
-  std::string access_bandwidth = "10Mbps";
+  std::string access_bandwidth = "100Mbps";
   std::string access_delay = "20ms";
   std::string prefix_file_name = "TcpVariantsComparisonCopa";
   uint64_t data_mbytes = 0;
@@ -331,7 +331,7 @@ main (int argc, char *argv[])
   char buffer[80];
   time (&rawtime);
   timeinfo = localtime (&rawtime);
-  strftime (buffer, sizeof (buffer), "%d-%m-%Y-%I-%M-%S", timeinfo);
+  strftime (buffer, sizeof (buffer), "%Y-%m-%d-%H-%M-%S", timeinfo);
   std::string currentTime (buffer);
   dir = "copa-rl-results/" + currentTime + "/";
   std::string dirToSave = "mkdir -p " + dir;

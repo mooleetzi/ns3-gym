@@ -75,8 +75,6 @@ class Agent:
             # convert observation to pytorch tensor
             observation = ptu.from_numpy(observation)
             # predict q-values for current state with policy network
-            print("obs cuda: ", observation.is_cuda)
-            print("q_net cuda: ", self.q_net.cuda())
             actions = self.q_net.forward(observation)
             action = self.env.action_space.sample()
             # choose action with highest q-value

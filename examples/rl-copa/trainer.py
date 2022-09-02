@@ -72,6 +72,8 @@ for epoch in range(epoch_num):
             observation, action, reward, observation_, done)
         observation = observation_
         agent.learn()
+    
+    print('Epoch: ', epoch, 'Score: ', score)
 
     episode_list.append(epoch)
     score_list.append(score)
@@ -83,9 +85,9 @@ for epoch in range(epoch_num):
         best_score = avg_score
 
 agent.save_checkpoint()
-util.plot_learning_curve(score_list, avg_score_list, config["env_name"])
+util.plot_learning_curve(score_list, avg_score_list, config["env_name"], config["plot_dir"])
 
 # store training data and config to csv file
 util.store_training_data(episode_list, score_list,
-                         avg_score_list, epsilon_list, config["env_name"])
-util.store_training_config(config, config["env_name"])
+                         avg_score_list, epsilon_list, config["env_name"], config["data_dir"])
+util.store_training_config(config, config["env_name"], config["data_dir"])

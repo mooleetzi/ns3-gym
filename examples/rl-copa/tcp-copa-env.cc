@@ -259,32 +259,32 @@ Collect observations
 Ptr<OpenGymDataContainer>
 TcpCopaEnv::GetObservation ()
 {
-  uint32_t parameterNum = 15;
-  std::vector<uint32_t> shape = {
-      parameterNum,
-  };
+  // uint32_t parameterNum = 15;
+  // std::vector<uint32_t> shape = {
+  //     parameterNum,
+  // };
 
-  Ptr<OpenGymBoxContainer<uint64_t>> box = CreateObject<OpenGymBoxContainer<uint64_t>> (shape);
+  // Ptr<OpenGymBoxContainer<uint64_t>> box = CreateObject<OpenGymBoxContainer<uint64_t>> (shape);
+  // box->AddValue (m_socketUuid);
+  // box->AddValue (0);
+  // box->AddValue (Simulator::Now ().GetMicroSeconds ());
+  // box->AddValue (m_nodeId);
+  // box->AddValue (m_tcb->m_ssThresh);
+  // box->AddValue (m_tcb->m_cWnd);
+  // box->AddValue (m_tcb->m_segmentSize);
+  // box->AddValue (m_segmentsAcked);
+  // box->AddValue (m_bytesInFlight);
+  // box->AddValue (m_rtt.GetMicroSeconds ());
+  // box->AddValue (m_tcb->m_minRtt.GetMicroSeconds ());
+  // box->AddValue (m_calledFunc);
+  // box->AddValue (m_tcb->m_congState);
+  // box->AddValue (m_event);
+  // box->AddValue (m_tcb->m_ecnState);
 
-  box->AddValue (m_socketUuid);
-  box->AddValue (0);
-  box->AddValue (Simulator::Now ().GetMicroSeconds ());
-  box->AddValue (m_nodeId);
-  box->AddValue (m_tcb->m_ssThresh);
-  box->AddValue (m_tcb->m_cWnd);
-  box->AddValue (m_tcb->m_segmentSize);
-  box->AddValue (m_segmentsAcked);
-  box->AddValue (m_bytesInFlight);
-  box->AddValue (m_rtt.GetMicroSeconds ());
-  box->AddValue (m_tcb->m_minRtt.GetMicroSeconds ());
-  box->AddValue (m_calledFunc);
-  box->AddValue (m_tcb->m_congState);
-  box->AddValue (m_event);
-  box->AddValue (m_tcb->m_ecnState);
-
-  // Print data
-  NS_LOG_INFO ("MyGetObservation: " << box);
-  return box;
+  // // Print data
+  // NS_LOG_INFO ("MyGetObservation: " << box);
+  // return box;
+  return m_ca->GetObservation ();
 }
 
 void

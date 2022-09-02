@@ -170,18 +170,18 @@ TcpCopaRl::Update_Velocity_Parameter (double now, double rtt, double win)
       m_last_time = now;
       m_last_win = win;
       m_last_win_len = 3 * rtt;
-      m_velocity_parameter = 1.0;
+      // m_velocity_parameter = 1.0;
     }
   else if (now >= (m_last_win_len + m_last_time))
     {
-      m_velocity_parameter = (m_last_win <= win) ? m_velocity_parameter * 2 : 1.0;
+      // m_velocity_parameter = (m_last_win <= win) ? m_velocity_parameter * 2 : 1.0;
 
       m_last_time = now;
       m_last_win = win;
       m_last_win_len = 3 * rtt;
     }
 
-  m_velocity_parameter = std::min (m_velocity_parameter, 32.0);
+  // m_velocity_parameter = std::min (m_velocity_parameter, 32.0);
 }
 
 void
@@ -192,6 +192,13 @@ TcpCopaRl::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Tim
     {
       CreateGymEnv ();
     }
+  double rtt_dec = 0; //for reward fn
+  double cwnd_dec = 0; //for reward fn
+  if (tcb->m_lastRtt.Get () != Time (0))
+    {
+      rtt_dec = rtt.GetSeconds () - tcb->m_lastRtt.Get ().GetSeconds ();
+    }
+
   Time now = Simulator::Now ();
   // 更新 最小RTT
   if ((m_probe_rtt_timestamp == -1) ||
@@ -239,6 +246,7 @@ TcpCopaRl::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Tim
                      tcb->m_cWnd.Get ();
       adder = std::max (1.0, adder);
       tcb->m_cWnd += static_cast<uint32_t> (adder);
+      cwnd_dec = -adder;
     }
   else
     {
@@ -249,24 +257,27 @@ TcpCopaRl::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked, const Tim
       if (tcb->m_cWnd <= static_cast<uint32_t> (10 * tcb->m_segmentSize))
         {
           tcb->m_cWnd = static_cast<uint32_t> (10 * tcb->m_segmentSize);
+          cwnd_dec = 0;
         }
       else
         {
           tcb->m_cWnd -= static_cast<uint32_t> (adder);
+          cwnd_dec = adder;
         }
     }
 
   std::cout << "Time\t" << Simulator::Now ().GetSeconds () << "\tCongestionWindow\t" << tcb->m_cWnd
             << "\trtt\t" << rtt.GetSeconds () << "\tsengdingRate\t" << m_sending_rate
             << "\texpectedrate\t" << m_expected_sending_rate << "\tdelay\t" << m_delay
-            << "\trttstarnding\t" << m_rtt_standing << "\tinrttt" << m_min_rtt << "\tparam\t"
+            << "\trttstarnding\t" << m_rtt_standing << "\tminrttt" << m_min_rtt << "\tparam\t"
             << m_velocity_parameter << std::endl;
+  m_new_reward += 0.1 * rtt_dec - 10 * cwnd_dec + 0.01 * m_sending_rate;
   if (m_tcpGymEnv)
     {
       m_tcpGymEnv->PktsAcked (tcb, segmentsAcked, rtt);
     }
 }
-float 
+float
 TcpCopaRl::Step (Ptr<OpenGymDataContainer> action)
 {
   Ptr<OpenGymDictContainer> dict = DynamicCast<OpenGymDictContainer> (action);
@@ -282,12 +293,64 @@ TcpCopaRl::Step (Ptr<OpenGymDataContainer> action)
       m_new_reward -= 10;
       m_velocity_parameter = 1.0;
     }
-  else if (m_velocity_parameter > 32)
+  else if (m_velocity_parameter > 64)
     {
       m_new_reward -= 10;
-      m_velocity_parameter = 32.0;
+      m_velocity_parameter = 64.0;
     }
   return m_reward;
+}
+
+Ptr<OpenGymDataContainer>
+TcpCopaRl::GetObservation ()
+{
+
+  // double m_sending_rate{0.0};
+  // double m_expected_sending_rate{0.0};
+  // double m_last_expected_sending_rate{0.0};
+
+  // double m_min_rtt{1000.0};
+  // double m_probe_min_rtt_len{10.0}; // minRTT 在 10秒内的最小值
+  // double m_probe_rtt_timestamp{-1.0};
+
+  // double m_rtt_standing{1000.0};
+  // double m_rtt_standing_len{0.0};
+  // double m_probe_rtt_standing_timestamp{-1.0};
+
+  // double m_delay{0.0};
+  // double m_delta{0.5};
+  // // change to rl_velocity
+  // double m_velocity_parameter{1.0};
+
+  // double m_last_win{-1.0};
+  // double m_last_time{-1.0};
+  // double m_last_win_len{0.0};
+  uint32_t parameterNum = 15;
+  std::vector<uint32_t> shape = {
+      parameterNum,
+  };
+
+  Ptr<OpenGymBoxContainer<double_t>> box = CreateObject<OpenGymBoxContainer<double_t>> (shape);
+  box->AddValue (m_sending_rate);
+  box->AddValue (m_expected_sending_rate);
+  box->AddValue (m_last_expected_sending_rate);
+  box->AddValue (m_min_rtt);
+  box->AddValue (m_probe_min_rtt_len);
+  box->AddValue (m_probe_rtt_timestamp);
+  box->AddValue (m_rtt_standing);
+  box->AddValue (m_rtt_standing_len);
+  box->AddValue (m_probe_rtt_standing_timestamp);
+  box->AddValue (m_delay);
+  box->AddValue (m_delta);
+  box->AddValue (m_velocity_parameter);
+  box->AddValue (m_last_win);
+  box->AddValue (m_last_time);
+  box->AddValue (m_last_win_len);
+  return box;
+
+  // Print data
+  NS_LOG_INFO ("MyGetObservation: " << box);
+  return box;
 }
 
 Ptr<TcpCongestionOps>
